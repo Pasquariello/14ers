@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" media="screen" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <title>14ers Tracker</title>
+
+    <!--  -->
+
+    <style>
+        body {
+            margin-top: 70px;
+            background-color: white;
+        }
+        
+        #nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        
+        .navbar {
+            -webkit-box-shadow: 0px 10px 20px 3px rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: 0px 10px 20px 3px rgba(0, 0, 0, 0.75);
+            box-shadow: 0px 10px 20px 3px rgba(0, 0, 0, 0.75);
+        }
+        
+        .navbar-default .navbar-nav > li > a {
+            color: #79CDCD;
+        }
+        
+        h1,
+        p {
+            color: #090302;
+            position: relative;
+            text-align: center;
+        }
+        
+        #map_canvas {
+            width: 100%;
+            height: 500px;
+            border: solid 5px #00E5EE;
+            margin: 0 auto;
+            /*
+            position: absolute;
+            margin-left: 300px;
+            margin-bottom: 200px;
+*/
+        }
+        
+        button:hover {
+            height: 15px;
+            width: 20px;
+            background-color: pink;
+        }
+        
+        button {
+            height: 15px;
+            width: 20px;
+            background-color: #3E6990;
+        }
+        
+        .btn text {
+            color: #090302;
+        }
+        
+        #show {
+            margin-left: 0px;
+        }
+        
+        .scroll {
+            height: 500px;
+            width: 200px;
+            overflow: auto;
+            padding: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="nav"></div>
+    <div class="container">
+
+        <h1>14er Map</h1>
+        <p>Click the peak names below to find where they are on the map!</p>
+
+        <div class="row">
+            <div class="col-sm-4">
+                <div id='show' class="scroll"></div>
+            </div>
+
+
+            <div class="col-sm-8">
+
+                <h1 id='peaksTitle'></h1>
+                <div id='map_canvas'></div>
+                <br/>
+            </div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    <script>
+        //this is an array of arrays that holds my data set for each 14er
+        var peaks = [
+['Mount Elbert', 39.11770, -106.44530],
+['Mount Massive', 39.1875, -106.4756],
+['Mount Harvard', 38.9243, -106.3208],
+['Blanca Peak', 37.5774, -105.4857],
+['North Massive', 39.19561, -106.48636],
+['La Plata Peak', 39.0294, -106.4729],
+['Uncompahgre Peak', 38.0716, -107.4621],
+['Crestone Peak', 37.9667, -105.5853],
+['Mount Lincoln', 39.3515, -106.1115],
+['Grays Peak', 39.6337, -105.8175],
+['Mount Antero', 38.6741, -106.246],
+['Torreys Peak', 39.64267, -105.82108],
+['Castle Peak', 39.0095, -106.86139],
+['Quandary Peak', 39.3972, -106.1064],
+['Mount Evans', 39.58821, -105.64359],
+['Longs Peak', 40.2548, -105.6161],
+['Mount Wilson', 37.8391, -107.9915 ],
+['Mount Cameron', 39.34713, -106.11845],
+['Mount Shavano', 38.6193, -106.2393],
+['Mount Belford', 38.9606, -106.3608],
+['Crestone Needle', 37.96468, -105.57667],
+['Mount Princeton', 38.7492, -106.2424],
+['Mount Yale', 38.8442, -106.3137],
+['Mount Bross', 39.33452, -106.1077],
+['Kit Carson Peak', 37.97958, -105.6025],
+['El Diente', 37.83929, -108.00522],
+['Maroon Peak', 39.0708, -106.989],
+['Tabeguache Peak', 38.62544, -106.25081],
+['Mount Oxford', 38.96481, -106.33879],
+['Mount Sneffels', 38.0036, -107.7922],
+['Mount Democrat', 39.33956, -106.13989],
+['Capitol Peak', 39.1502, -107.083],
+['Pikes Peak', 38.8405, -105.0446],
+['Snowmass Mountain', 39.1187, -107.0665],
+['Mount Eolus', 37.6219, -107.6226],
+['Windom Peak', 37.6212, -107.5919],
+['Challenger Point', 37.98024, -105.60643],
+['Mount Columbia', 38.9034, -106.2974],
+['Missouri Mountain', 38.94755, -106.37836],
+['Humboldt Peak', 37.9761, -105.555],
+['Mount Bierstadt', 39.58252, -105.66862],
+['Conundrum Peak', 39.01428, -106.8638],
+['Sunlight Peak', 37.6273, -107.59579],
+['Handies Peak', 37.9129, -107.5043],
+['Culebra Peak', 37.1222, -105.1857],
+['Ellingwood Point', 37.58251, -105.4925],
+['Mount Lindsey', 37.5838, -105.4448],
+['North Eolus', 37.62513, -107.62117],
+['Little Bear Peak', 37.56668, -105.49723],
+['Mount Sherman', 39.2249, -106.1698],
+['Redcloud Peak', 37.9409, -107.4217],
+['North Maroon Peak', 39.07595, -106.98708],
+['Pyramid Peak', 39.0715, -106.9501],
+['Wilson Peak', 37.8603, -107.9847],
+['Wetterhorn Peak', 38.0606, -107.5108],
+['San Luis Peak', 37.9868, -106.9311],
+['Mount of the Holy Cross', 39.4668, -106.4816],
+['Huron Peak', 38.9455, -106.438],
+['Sunshine Peak', 37.92268, -107.42548],
+];
+
+        var climbedPeaks = [];
+
+        buildList();
+
+
+        //this is a function is takes in no arguments it creates a text variable that concactinates a list of all the 14ers from the peaks array and builds out a list in the show id
+        function buildList() {
+            var text = '';
+
+            text += ' <div class="col-sm-4">';
+            for (var j = 0; j < peaks.length; j++) {
+
+                text += ' <div>';
+
+
+
+                var peak = peaks[j];
+
+                text += ' <a id="peak' + j + '" class="btn text" onclick="buildNewArray(\'' + peak + '\')">' + ' ' + peaks[j][0] + '</a>';
+                text += ' </div>';
+            }
+
+
+            document.getElementById('show').innerHTML += text;
+
+        }
+
+
+
+        //this is a function it takes in peak as an argument, it resets the climbedPeaks array to nothing so only one peak shows at a time, it has 2 variables str and res. 
+
+        function buildNewArray(peak) {
+            climbedPeaks = [];
+
+            //str stands for string and is equal to the string 'peak' that gets passed into the function
+            var str = peak;
+            // res stands for result and it is equal to the result of spliting the str variable at the first comma to extract the peak name
+            var res = str.split(',');
+            //climbedPeaks is an empty array that will be used to hold a the data for each peak when it is selescted by the user
+            //the res variable is being pushed into this array
+            climbedPeaks.push(res);
+
+            //this is where the showPeaksTitle function is being called it is dependant on happening after a peak has been selected
+            showPeaksTitle();
+
+
+            //call the initialize function again to show markers for peaks added into the newArray of peaks
+            initialize();
+        }
+
+
+
+
+        //this is a function that takes in no arguments, it sets the element with id peaksTitle to show the peak name, it returns nothing
+        function showPeaksTitle() {
+            document.getElementById('peaksTitle').innerHTML = climbedPeaks[0][0];
+        }
+
+
+
+        //this is a function that takes in no arguments, it creates the google map from the google maps api, it starts witha variable latlng that centers Denver
+        function initialize() {
+            var latlng = new google.maps.LatLng(39.053159, -105.542393);
+            //the options variable sets the information for my map starting point
+            var myOptions = {
+                zoom: 7,
+                center: latlng,
+                mapTypeId: google.maps.MapTypeId.HYBRID
+            };
+
+            var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+
+
+
+
+
+            //loop through array and find any mountains in the climbedPeaks array if there are any the lat and long will be used to show up on the map
+            for (var i = 0; i < climbedPeaks.length; i++) {
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(climbedPeaks[i][1], climbedPeaks[i][2]),
+                    map: map,
+                    //icon: image,
+                    title: climbedPeaks[i][0],
+                    zIndex: climbedPeaks[i][3]
+
+                });
+            }
+
+        }
+
+
+        //call initialize function on window load
+        window.onload = initialize;
+    </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-JJS0-ieenXxIghClkGZCJBJROzos-nM&libraries=places" async defer></script>
+</body>
+
+</html>

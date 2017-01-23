@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" media="screen" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/css/bootstrap.min.css">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+
+    <title>Plan Your Trip</title>
+
+
+    <style>
+        body {
+            padding: 10px;
+        }
+        
+        p {
+            padding: 10px;
+        }
+        
+        .bigBlue {
+            background-color: blue;
+            width: 200px;
+            height: 20px;
+        }
+        
+        input {
+            min-width: 200px;
+        }
+        
+        select {
+            min-width: 100px;
+        }
+        
+        button {
+            height: 30px;
+        }
+        
+        .emailList {
+            margin: 5px;
+        }
+        
+        #nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 100;
+        }
+        
+        .navbar {
+            -webkit-box-shadow: 0px 10px 20px 3px rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: 0px 10px 20px 3px rgba(0, 0, 0, 0.75);
+            box-shadow: 0px 10px 20px 3px rgba(0, 0, 0, 0.75);
+        }
+        
+        .navbar-default .navbar-nav > li > a {
+            color: #79CDCD;
+        }
+        
+        .container {
+            margin-top: 70px;
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+
+    <div id="nav"></div>
+
+    <div class="container" ng-app="app" ng-controller="sbCtrl">
+        <h1> Keep your Friends and Family Informed!</h1>
+        <p>No one wants an accident on the top of a peak! So be smart and let someone know where you are going! it takes only a few short secods to fill out the form and we will have an email drafted to whomever you want, fully-loaded with your info and some notes about your next adventure! stay safe stay smart stay active!</p>
+        <div>
+            <form>
+                <input type="text" ng-model="name" placeholder="Your Name" />
+                <br/>
+                <br/>
+                <span>Will anyone be joining you?</span>
+                <input type="checkbox" name="" value="" ng-model="showPartners"> Yes
+                <br>
+
+
+
+
+
+
+
+
+                <br/>
+                <input ng-show="showPartners" type="text" placeholder="Partner's Name" />
+                <br/>
+                <br/>
+                <select ng-model="tripType" ng-options="x for x in trips">
+                    <option value="" selected="selected">Activity</option>
+                </select>
+                <br/>
+                <br/>
+                <select ng-model="trail" ng-options="x[0] for x in peaks">
+                    <option value="" selected="selected">Peak</option>
+                </select>
+                <br/>
+                <br/>
+                <label>Setting Out:</label>
+                <br/>
+                <select ng-model="daysSelected" ng-options="x for x in days">
+                    <option value="" selected="selected">Day</option>
+                </select>
+
+                <select ng-model="monthSelected" ng-options="x for x in months">
+                    <option value="" selected="selected">Month</option>
+                </select>
+
+                <select ng-model="daysInMonthSelected" ng-options="x for x in daysInMonth">
+                    <option value="" selected="selected">Day</option>
+                </select>
+                <br/>
+                <label>Returning:</label>
+                <br/>
+                <select ng-model="returnDaySelected" ng-options="x for x in days">
+                    <option value="" selected="selected">Day</option>
+                </select>
+
+                <select ng-model="returnMonthSelected" ng-options="x for x in months">
+                    <option value="" selected="selected">Month</option>
+                </select>
+
+                <select ng-model="returnDayInMonthSelected" ng-options="x for x in daysInMonth">
+                    <option value="" selected="selected">Day</option>
+                </select>
+
+
+                <br/>
+                <br/>
+
+                <div ng-repeat="x in inputs">
+
+                    <input class="emailList" type="text" id="es" placeholder="Contact Name" />
+                    <input placeholder="Contact Email" type="email" id="recipients" ng-model="x.inputs" />
+
+                </div>
+                <br/>
+                <button ng-click="addField()" class="btn btn-success">add</button>
+                <button class="btn btn-danger" ng-click="removeInput()">X</button>
+                <br/>
+            </form>
+
+            <br/>
+
+            <button ng-click="statment=!statment; saveEmails()">Submit</button>
+
+            <div ng-show="statment">
+                <form>
+
+                    <div style="border: solid black 0.5px; padding: 15px; margin: 10px;" id="bodyText" style="width:80%; height: 500px" name="textBody" ng-model="bodyText">
+                        Hello,
+                        <br/> This email is being sent out on behalf of {{name}}. {{name}} is setting out on an adventure and wanted to make sure to pass along some information to you! This way someone has some idea of {{name}}'s itinerary.
+                        <br/>
+                        <br/> Some basic inforation is that {{name}} is leaving on {{daysSelected}} {{monthSelected}} {{daysInMonthSelected}}, {{date | date:'yyyy'}} for a {{tripType}} trip at {{trail[0]}}. {{name}} plans on making it back {{returnTimeSelected}} on {{returnDaySelected}} {{returnMonthSelected}} {{returnDayInMonthSelected}}, {{date | date:'yyyy'}}. You can view thier itinerary in more detail by clicking the link provided below.
+                        <br/>
+                        <br/> For a weather report please check out the link provided below.
+                        <br/>
+                        <br/> If an emergency does arrise stay calm and call the local autorities. There is a link to the Colorado Rescue Division's website provided below as well as a phone number to get someone on the line. If trouble does arise remain calm but, do not hesitate.
+                        <br/>
+                        <br/> Also, dont worry! {{name}} is going to have a great time on the {{tripType}} trip! Wish {{name}} the best of luck, good vibes and good times all around!
+                        <br/>
+                        <br/> All the best,
+                        <br/> {{name}} and,
+                        <br/> your friends from PeakScape
+                        <br/>
+                        <br/>
+                        <p>Click the links below for more information</p>
+                        <a href="https://www.coloradosarboard.org/">Colorado Search and Rescue</a>
+                        <p>Rocky Mountain Rescue Group: Phone(303) 449-4141</p>
+
+                        <a href="{{trail[3]}}">{{trail[0]}} 7 day forecast</a>
+
+                    </div>
+
+
+                    <p> Ok awesome! now people will have some idea of where to come find you before the buzzards do! Just take one quick read over and send it off with the button below</p>
+
+                    <a href="mailto:{{final}}?subject={{name}} Itinerary&body={{bodyText}}" ng-click="save()">Send</a>
+
+                </form>
+            </div>
+
+
+
+
+
+
+
+
+            <script src="js/script.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+            <script>
+                var app = angular.module('app', []);
+
+
+                //start controller
+                app.controller('sbCtrl', function ($scope) {
+
+
+
+                    //this is a function it takes in nothing and binds the textBody to the bodyText HTML id
+                    $scope.save = function () {
+                        $scope.textBody = document.getElementById('bodyText').innerHTML;
+
+                        $scope.bodyText = $scope.textBody;
+                    }
+
+                    //this sets the show partner element to false so it is not originally visible
+                    $scope.showPartners = false;
+
+                    //this is a function that takes in no arguments is changes the boolean state of the showPartners element
+                    $scope.showP = function () {
+                        $scope.showPartners = true;
+                    }
+
+
+                    //this is an array, it contains the days of the week                
+                    $scope.days = ["Sunday", 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+
+                    //this is an array that contains all the possible activities foe my app
+                    $scope.trips = ['Hiking', 'Running', 'Biking', 'Camping', 'Rock Climbing', 'backpacking'];
+
+
+                    //this is an array of the possible days in a month for a user to chose
+                    $scope.daysInMonth = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31];
+
+                    //this is an array of the months in a year
+                    $scope.months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+                    //this is an array of arrays, each inner array contains information relevant to each 14er.
+                    //the inner arrays postions:[i][0] = peak name, [i][1] = peak latitude, [i][2] = peak longitude, [i][3] = link to weather
+                    $scope.peaks = [
+['Mount Elbert', 39.11770, -106.44530, 'http://www.mountain-forecast.com/peaks/Mount-Elbert/forecasts/3500'],
+['Mount Massive', 39.1875, -106.4756, 'http://www.mountain-forecast.com/peaks/Mount-Massive/forecasts/3500'],
+['Mount Harvard', 38.9243, -106.3208, 'http://www.mountain-forecast.com/peaks/Mount-Harvard/forecasts/3500'],
+['Blanca Peak', 37.5774, -105.4857, 'http://www.mountain-forecast.com/peaks/Blanca-Peak/forecasts/3500'],
+['North Massive', 39.19561, -106.48636, 'http://www.mountain-forecast.com/peaks/Mount-Massive/forecasts/3500'],
+['La Plata Peak', 39.0294, -106.4729, 'http://www.mountain-forecast.com/peaks/La-Plata-Peak/forecasts/3500'],
+['Uncompahgre Peak', 38.0716, -107.4621, 'http://www.mountain-forecast.com/peaks/Uncompahgre-Peak/forecasts/3500'],
+['Crestone Peak', 37.9667, -105.5853, 'http://www.mountain-forecast.com/peaks/Crestone-Peak/forecasts/3500'],
+['Mount Lincoln', 39.3515, -106.1115, 'http://www.mountain-forecast.com/peaks/Mount-Lincoln/forecasts/3500'],
+['Grays Peak', 39.6337, -105.8175, 'http://www.mountain-forecast.com/peaks/Grays-Peak/forecasts/3500'],
+['Mount Antero', 38.6741, -106.2462, 'http://www.mountain-forecast.com/peaks/Mount-Antero/forecasts/3500'],
+['Torreys Peak', 39.64267, -105.82108, 'http://www.mountain-forecast.com/peaks/Torreys-Peak/forecasts/3500'],
+['Castle Peak', 39.0095, -106.86139, 'http://www.mountain-forecast.com/peaks/Castle-Peak/forecasts/3500'],
+['Quandary Peak', 39.3972, -106.1064, 'http://www.mountain-forecast.com/peaks/Quandary-Peak/forecasts/3500'],
+['Mount Evans', 39.58821, -105.64359, 'http://www.mountain-forecast.com/peaks/Mount-Evans/forecasts/3500'],
+['Longs Peak', 40.2548, -105.6161, 'http://www.mountain-forecast.com/peaks/Longs-Peak/forecasts/3500'],
+['Mount Wilson', 37.8391, -107.9915, 'http://www.mountain-forecast.com/peaks/Mount-Wilson/forecasts/3500'],
+['Mount Cameron', 39.34713, -106.11845, 'http://www.mountain-forecast.com/peaks/Mount-Cameron/forecasts/3500'],
+['Mount Shavano', 38.6193, -106.2393, 'http://www.mountain-forecast.com/peaks/Mount-Shavano/forecasts/3500'],
+['Mount Belford', 38.9606, -106.3608, 'http://www.mountain-forecast.com/peaks/Mount-Belford/forecasts/3500'],
+['Crestone Needle', 37.96468, -105.57667, 'http://www.mountain-forecast.com/peaks/Crestone-Needle/forecasts/3500'],
+['Mount Princeton', 38.7492, -106.2424, 'http://www.mountain-forecast.com/peaks/Mount-Princeton/forecasts/3500'],
+['Mount Yale', 38.8442, -106.3137, 'http://www.mountain-forecast.com/peaks/Mount-Yale/forecasts/3500'],
+['Mount Bross', 39.33452, -106.1077, 'http://www.mountain-forecast.com/peaks/Mount-Bross/forecasts/3500'],
+['Kit Carson Peak', 37.97958, -105.6025, 'http://www.mountain-forecast.com/peaks/Kit-Carson-Mountain/forecasts/3500'],
+['El Diente', 37.83929, -108.00522, 'http://www.mountain-forecast.com/peaks/El-Diente/forecasts/3500'],
+['Maroon Peak', 39.0708, -106.989, 'http://www.mountain-forecast.com/peaks/Maroon-Bells/forecasts/3500'],
+['Tabeguache Peak', 38.62544, -106.25081, 'http://www.mountain-forecast.com/peaks/Tabeguache-Peak/forecasts/3500'],
+['Mount Oxford', 38.96481, -106.33879, 'http://www.mountain-forecast.com/peaks/Mount-Oxford/forecasts/3500'],
+['Mount Sneffels', 38.0036, -107.7922, 'http://www.mountain-forecast.com/peaks/Mount-Sneffels/forecasts/3500'],
+['Mount Democrat', 39.33956, -106.13989, 'http://www.mountain-forecast.com/peaks/Mount-Democrat/forecasts/3500'],
+['Capitol Peak', 39.1502, -107.083, 'http://www.mountain-forecast.com/peaks/Capitol-Peak/forecasts/3500'],
+['Pikes Peak', 38.8405, -105.0446, 'http://www.mountain-forecast.com/peaks/Pikes-Peak/forecasts/3500'],
+['Snowmass Mountain', 39.1187, -107.0665, 'http://www.mountain-forecast.com/peaks/Snowmass-Mountain/forecasts/3500'],
+['Mount Eolus', 37.6219, -107.6226, 'http://www.mountain-forecast.com/peaks/Mount-Eolus/forecasts/3500'],
+['Windom Peak', 37.6212, -107.5919, 'http://www.mountain-forecast.com/peaks/Windom-Peak/forecasts/3500'],
+['Challenger Point', 37.98024, -105.60643, 'http://www.mountain-forecast.com/peaks/Challenger-Point/forecasts/3500'],
+['Mount Columbia', 38.9034, -106.2974, 'http://www.mountain-forecast.com/peaks/Mount-Columbia/forecasts/3500'],
+['Missouri Mountain', 38.94755, -106.37836, 'http://www.mountain-forecast.com/peaks/Missouri-Mountain/forecasts/3500'],
+['Humboldt Peak', 37.9761, -105.555, 'http://www.mountain-forecast.com/peaks/Humboldt-Peak/forecasts/3500'],
+['Mount Bierstadt', 39.58252, -105.66862, 'http://www.mountain-forecast.com/peaks/Mount-Bierstadt/forecasts/3500'],
+['Conundrum Peak', 39.01428, -106.8638, 'http://www.mountain-forecast.com/peaks/Castle-Peak/forecasts/3500'],
+['Sunlight Peak', 37.6273, -107.59579, 'http://www.mountain-forecast.com/peaks/Sunlight-Peak/forecasts/3500'],
+['Handies Peak', 37.9129, -107.5043, 'http://www.mountain-forecast.com/peaks/Handies-Peak/forecasts/3500'],
+['Culebra Peak', 37.1222, -105.1857, 'http://www.mountain-forecast.com/peaks/Culebra-Peak/forecasts/3500'],
+['Ellingwood Point', 37.58251, -105.4925, 'http://www.mountain-forecast.com/peaks/Ellingwood-Point/forecasts/3500'],
+['Mount Lindsey', 37.5838, -105.4448, 'http://www.mountain-forecast.com/peaks/Mount-Lindsey/forecasts/3500'],
+['North Eolus', 37.62513, -107.62117, 'http://www.mountain-forecast.com/peaks/Mount-Eolus/forecasts/3500'],
+['Little Bear Peak', 37.56668, -105.49723, 'http://www.mountain-forecast.com/peaks/Little-Bear-Peak/forecasts/3500'],
+['Mount Sherman', 39.2249, -106.1698, 'http://www.mountain-forecast.com/peaks/Mount-Sherman/forecasts/3500'],
+['Redcloud Peak', 37.9409, -107.4217, 'http://www.mountain-forecast.com/peaks/Redcloud-Peak/forecasts/3500'],
+['North Maroon Peak', 39.07595, -106.98708, 'http://www.mountain-forecast.com/peaks/Maroon-Bells/forecasts/3500'],
+['Pyramid Peak', 39.0715, -106.9501, 'http://www.mountain-forecast.com/peaks/Pyramid-Peak/forecasts/3500'],
+['Wilson Peak', 37.8603, -107.9847, 'http://www.mountain-forecast.com/peaks/Wilson-Peak/forecasts/3500'],
+['Wetterhorn Peak', 38.0606, -107.5108, 'http://www.mountain-forecast.com/peaks/Wetterhorn-Peak/forecasts/3500'],
+['San Luis Peak', 37.9868, -106.9311, 'http://www.mountain-forecast.com/peaks/San-Luis-Peak/forecasts/3500'],
+['Mount of the Holy Cross', 39.4668, -106.4816, 'http://www.mountain-forecast.com/peaks/Mount-of-the-Holy-Cross/forecasts/3500'],
+['Huron Peak', 38.9455, -106.438, 'http://www.mountain-forecast.com/peaks/Huron-Peak/forecasts/3500'],
+['Sunshine Peak', 37.92268, -107.42548, 'http://www.mountain-forecast.com/peaks/Sunshine-Peak/forecasts/3500'],
+];
+
+
+
+                    //this is an array of objects it is used to create input fields
+                    $scope.inputs = [{
+                        id: 'input1'
+                    }];
+
+
+                    //this is an empty array used to store emails
+                    $scope.emailsSaved = []
+
+                    //this is an empty array used to store emails that will be sent
+                    $scope.emailsToSend = []
+
+                    //this is a function, it takes in no arguments, it pushes bound values into the emailsSaved array, it checks the length of the array
+                    $scope.saveEmails = function () {
+
+                        $scope.emailsSaved.push($scope.inputs);
+                        for (var i = 0; i < $scope.emailsSaved[0].length; i++) {
+
+                            if ($scope.emailsSaved[0].length == 1) {
+
+                                $scope.final = $scope.emailsSaved[0][0].inputs;
+                            }
+                            if ($scope.emailsSaved[0].length == 2) {
+
+
+                                $scope.final = $scope.emailsSaved[0][0].inputs + ';' + $scope.emailsSaved[0][1].inputs;
+
+                            }
+                        }
+                    }
+
+
+                    //this is a function that takes in no arguments it creates a variable called newInput that adds by 1 to the length of the input array of objects declared above
+                    $scope.addField = function () {
+                        var newInput = $scope.inputs.length + 1;
+                        $scope.inputs.push({
+                            id: 'inputs' + newInput
+                        });
+                        $scope.inputed = $scope.inputs
+                    };
+
+
+
+                    //this is a function that takes in no arguments it creates a variable called lastItem that removes by 1 from the length of the input array of objects declared above  
+                    $scope.removeInput = function () {
+                        var lastItem = $scope.inputs.length - 1;
+                        $scope.inputs.splice(lastItem);
+                    };
+
+
+                    //this is a method that generates the current date
+                    $scope.date = new Date();
+                    $scope.emails = [];
+
+
+                });
+                //end of controllers
+            </script>
+
+
+</body>
+
+</html>
